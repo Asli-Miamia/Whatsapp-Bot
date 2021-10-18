@@ -86,7 +86,7 @@ let state = {
 moment.tz.setDefault('Asia/Jakarta').locale('id')
 module.exports = msgHandler = async (client, message) => {
     try {
-        const { type, id, from, t, sender, isGroupMsg, chat, chatId, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, author, mentionedJidList } = message
+        const { type, id, from, t, trim,  sender, isGroupMsg, chat, chatId, caption, isMedia, mimetype, quotedMsg, quotedMsgObj, author, mentionedJidList } = message
         let { body } = message
         const { name, formattedTitle } = chat
         let { pushname, verifiedName } = sender
