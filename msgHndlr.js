@@ -21,7 +21,7 @@ const rugaapi = require('./lib/rugaapi.js')
 const { wallpaper } = require('./wallpaper');
 const getZodiak = require('./zodiak');
 const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss, msgFilter, processTime, nulis } = require('./lib/functions')
-const { help, BotName, diamond, iklan, peraturan, preminfo, privat, rdp, jasa, freemusic, cmd, snk, info, akun, donasi, readme, fnmenuAA, GMMENU, ANMENU, OTMENU, ORMENUm, ADMENU, GPMENU, MDMENU, MKMENU, ASMENU, SHMENU, KRMENU, DNMENU } = require('./lib/help')
+const { help, BotName, diamond, iklan, peraturan, preminfo, privat, rdp, jasa, freemusic, cmd, snk, info, akun, donasi, readme, fnmenuAA, GMMENU, ANMENU, OTMENU, ORMENUm, ADMENU, GPMENU, MDMENU, MKMENU, ASMENU, SHMENU, KRMENU, DNMENU, menumenu } = require('./lib/help')
 const { stdout } = require('process')
 const { uploadImages, custom, fetchBase64, getBase64 } = require('./lib/fetcher')
 const neko = require('./lib/nekopoi.js')
@@ -4352,20 +4352,21 @@ ${desc}`)
             break
 
         case '#menu':
-            if (args[1] == '')client.reply(from, menumenu, id)
-            if (args[1] == 'fn')client.reply(from, fnmenuAA, id)
-            if (args[1] == 'gm')client.reply(from, GMMENU, id)
-            if (args[1] == 'an')client.reply(from, ANMENU, id)
-            if (args[1] == 'ot')client.reply(from, OTMENU, id)
-            if (args[1] == 'or')client.reply(from, ORMENUm, id)
-            if (args[1] == 'ad')client.reply(from, ADMENU, id)
-            if (args[1] == 'gp')client.reply(from, GPMENU, id)
-            if (args[1] == 'md')client.reply(from, MDMENU, id)
-            if (args[1] == 'mk')client.reply(from, MKMENU, id)
-            if (args[1] == 'as')client.reply(from, ASMENU, id)
-            if (args[1] == 'sh')client.reply(from, SHMENU, id)
-            if (args[1] == 'kr')client.reply(from, KRMENU, id)
-            if (args[1] == 'dn')client.reply(from, DNMENU, id)
+            const {menumenu, fnmenuAA, GMMENU, ANMENU, OTMENU, ORMENUm, ADMENU, GPMENU, MDMENU, MKMENU, ASMENU, SHMENU, KRMENU, DNMENU} = './lib/help'
+            if (args[1] == '')client.sendText(from, menumenu, id)
+            if (args[1] == 'fn')client.sendText(from, fnmenuAA, id)
+            if (args[1] == 'gm')client.sendText(from, GMMENU, id)
+            if (args[1] == 'an')client.sendText(from, ANMENU, id)
+            if (args[1] == 'ot')client.sendText(from, OTMENU, id)
+            if (args[1] == 'or')client.sendText(from, ORMENUm, id)
+            if (args[1] == 'ad')client.sendText(from, ADMENU, id)
+            if (args[1] == 'gp')client.sendText(from, GPMENU, id)
+            if (args[1] == 'md')client.sendText(from, MDMENU, id)
+            if (args[1] == 'mk')client.sendText(from, MKMENU, id)
+            if (args[1] == 'as')client.sendText(from, ASMENU, id)
+            if (args[1] == 'sh')client.sendText(from, SHMENU, id)
+            if (args[1] == 'kr')client.sendText(from, KRMENU, id)
+            if (args[1] == 'dn')client.sendText(from, DNMENU, id)
             break
 
         case '#menu1':
