@@ -2002,6 +2002,8 @@ ${desc}`)
 💌️ *Rating:* ${rated}
 ❤️ *Score:* ${score}
 🌀 *Type:* ${type}
+🟩*Start Date:* ${start_date}
+🟥*End Date:* ${end_date}
 👨‍👨‍👧‍👧 *Member:* ${members}
 💚️ *Synopsis:* ${synopsis}
 🌐️ *URL*: ${url}`
