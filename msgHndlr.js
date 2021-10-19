@@ -1,4 +1,5 @@
 const { decryptMedia } = require('@open-wa/wa-decrypt')
+const ytdl = require('ytdl-core')
 const fs = require('fs-extra')
 const axios = require('axios')
 const moment = require('moment-timezone')
@@ -20,6 +21,7 @@ const translatte = require('translatte')
 const rugaapi = require('./lib/rugaapi.js')
 const { wallpaper } = require('./wallpaper');
 const getZodiak = require('./zodiak');
+const { existsSync, writeFileSync, readdirSync, readFileSync, writeFile, unlinkSync, createWriteStream } = fs
 const { downloader, liriklagu, quotemaker, randomNimek, fb, sleep, jadwalTv, ss, msgFilter, processTime, nulis } = require('./lib/functions')
 const { help, BotName, diamond, iklan, peraturan, preminfo, privat, rdp, jasa, freemusic, cmd, snk, info, akun, donasi, readme, fnmenuAA, GMMENU, ANMENU, OTMENU, ORMENUm, ADMENU, GPMENU, MDMENU, MKMENU, ASMENU, SHMENU, KRMENU, DNMENU, menumenu } = require('./lib/help')
 const { stdout } = require('process')
@@ -91,7 +93,6 @@ module.exports = msgHandler = async (client, message) => {
         const { name, formattedTitle } = chat
         let { pushname, verifiedName } = sender
         pushname = pushname || verifiedName
-        const arg = body.trim().substring(body.indexOf(' ') + 1)
         const commands = caption || body || ''
         const command = commands.toLowerCase().split(' ')[0] || ''
         const args =  commands.split(' ')
@@ -1223,47 +1224,41 @@ ${desc}`)
                     break
 
         case '#ytmp4':
-            if (args.length == 1) return client.reply(from, `Untuk mendownload lagu dari youtube\nketik: ${prefix}ytmp3 [link_yt]`, id)
-            const linkmp4 = args[1].replace('https://youtu.be/','').replace('https://www.youtube.com/watch?v=','')
-			rugaapi.ytmp4(`https://youtu.be/${linkmp4}`)
-            .then(async(res) => {
-				if (res.error) return client.sendFileFromUrl(from, `${res.url}`, '', `${res.error}`)
-				await client.sendFileFromUrl(from, `${res.result.thumb}`, '', `Lagu ditemukan\n\nJudul: ${res.result.title}\nDesc: ${res.result.desc}\nSabar lagi dikirim`, id)
-				await client.sendFileFromUrl(from, `${res.result.url}`, '', '', id)
-				.catch(() => {
-					client.reply(from, `URL Ini ${args[1]} Sudah pernah di Download sebelumnya. URL akan di Reset setelah 1 Jam/60 Menit`, id)
-				})
-			})
-            break
-            /*if (!isPrem) return client.reply(from, `${ubah}Perintah ini hanya untuk user premium! hubungi owner untuk upgrade premium atau ketik #owner${ubah}`, id)
-            if (!isGroupMsg) return client.reply(from, `Perintah ini hanya bisa di gunakan dalam group!`, id)
-           if (isLimit(serial)) return client.reply(from, `Maaf ${pushname}, Kuota Limit Kamu Sudah Habis, Ketik #limit Untuk Mengecek Kuota Limit Kamu`, id)
-            if (args.length === 1) return client.reply(from, `Kirim perintah *#ytmp4 [ Link Yt ]*, untuk contoh silahkan kirim perintah *#readme*`, id)
-            let isLin1 = args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/)
-            if (!isLin1) return client.reply(from, mess.error.Iv, id)
-            try {
-                client.reply(from, mess.wait, id)
-                const ytvh = await fetch(`http://api.vhtear.com/ytdl?link=${args[1]}&apikey=${vhtearkey}`)
-                if (!ytvh.ok) throw new Error(`Error Get Video : ${ytvh.statusText}`)
-                const ytvh2 = await ytvh.json()
-                 if (ytvh2.status == false) {
-                    client.reply(from, `*Maaf Terdapat kesalahan saat mengambil data, mohon pilih media lain...*`, id)
-                } else {
-                    const { title, UrlVideo, imgUrl, size } = await ytvh2.result
-                    if (Number(ytvh2.result.size.split(' MB')[0]) > 30.00) return client.sendFileFromUrl(from, UrlVideo, `${title}.mp4`, `*「 YOUTUBE MP4 」*\n\n• *Judul* : ${title}\n• *Filesize* : ${size}\n\n__Maaf, Durasi video melebihi 30 MB. Silahkan download video melalui link dibawah_.\n${UrlVideo}`, id)
-                    client.sendFileFromUrl(from, imgUrl, 'thumb.jpg', `*「 YOUTUBE MP4 」*\n\n• *Judul* : ${title}\n• *Filesize* : ${size}\n\n_Silahkan tunggu file media sedang dikirim mungkin butuh beberapa menit_`, id)
-                    /await client.sendFileFromUrl(from, UrlVideo, `${title}.mp4`, '', id).catch(() => client.reply(from, mess.error.Yt4, id))
-                    await limitAdd(serial)
-                }
-            } catch (err) {
-                client.sendText(ownerNumber, 'Error ytmp4 : '+ err)
-                client.reply(from, mess.error.Yt4, id)
-                console.log(err)
-            }
-            break*/
+                    if (args.length == 1) return reply(`Untuk mendownload video dari youtube\nketik: ${prefix}ytmp4 <link yt> (don't include <> symbol)`)
+                    if (args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/) === null) return reply(`Link youtube tidak valid.`)
+                    //sendText(resMsg.wait)
+                    let ytid = args[1].substr((args[1].indexOf('=')) != -1 ? (args[1].indexOf('=') + 1) : (args[1].indexOf('be/') + 3))
+                    try {
+                        ytid = ytid.replace(/&.+/g, '').replace(/>/g, '')
+                        let path = `./media/server.mp4`
+                        let { videoDetails: inf } = await ytdl.getInfo(ytid)
+                        if (inf.lengthSeconds > 900) return client.reply(`Error. Durasi video lebih dari 15 menit!`)
+                        let dur = `${('0' + (inf.lengthSeconds / 60).toFixed(0)).slice(-2)}:${('0' + (inf.lengthSeconds % 60)).slice(-2)}`
+                        let estimasi = inf.lengthSeconds / 100
+                        let est = estimasi.toFixed(0)
+                        client.sendFileFromUrl(from, `${inf.thumbnails[3].url}`, ``,
+                            `Link video valid!\n\n` +
+                            `Judul   : ${inf.title}\n` +
+                            `Channel : ${inf.ownerChannelName}\n` +
+                            `Durasi  : ${dur}\n` +
+                            `Uploaded: ${inf.uploadDate}\n` +
+                            `View    : ${inf.viewCount}\n\n` +
+                            `Video sedang dikirim ± ${est} menit`, id)
 
-    
-
+                        ytdl(ytid, { quality: 'highest' }).pipe(createWriteStream(path))
+                            .on('error', (err) => {
+                                printError(err, false)
+                                if (existsSync(path)) unlinkSync(path)
+                            })
+                            .on('finish', () => {
+                                client.sendFile(from, path, `${ytid}.mp4`, inf.title, id).then(console.log(color('[LOGS]', 'grey'), `Video Processed for ${processTime(t, moment())} Seconds`))
+                                if (existsSync(path)) unlinkSync(path)
+                            })
+                    } catch (err) {
+                        console.log(err)
+                        client.reply(from, 'error')
+                    }
+                    break
         case '#play':
             ////if (!isPrem) return client.reply(from, `${ubah}Perintah ini hanya untuk user premium! hubungi owner untuk upgrade premium atau ketik #owner${ubah}`, id)
             //if (!isGroupMsg) return client.reply(from, 'Perintah ini hanya bisa di gunakan dalam group', id)
@@ -2019,8 +2014,9 @@ ${desc}`)
         // MEDIA //
         case '#cuaca':
             if (args.length == 1) return client.reply(from, `Untuk melihat cuaca pada suatu daerah\nketik: ${prefix}cuaca [daerah]`, id)
-            const cuacaq = body.slice(7)
-            const cuacap = await rugaapi.cuaca(cuacaq)
+            const provinsi = arg[2]
+            const kota = args[3]
+            const cuacap = await rugaapi.cuaca(provinsi, kota)
             await client.reply(from, cuacap, id)
             .catch(() => {
                 client.reply(from, 'Ada yang Error!', id)
@@ -2509,7 +2505,7 @@ ${desc}`)
             /* if (!isOwner, !isAdmin) return client.reply(from, 'Perintah ini hanya untuk Owner & Admin bot', id) */
             if (args.length === 1) return client.reply(from, 'Kirim perintah *#joox [optional]*\nContoh : *#joox Alan Walker*', id)
             client.reply(from, mess.wait, id)
-            arg = body.trim().split(' ')
+            const arg = body.trim().split(' ')
             console.log(...arg[1])
             var slicedArgs = Array.prototype.slice.call(arg, 1);
             console.log(slicedArgs)
@@ -2977,14 +2973,14 @@ ${desc}`)
         case '#groupAMADEUS':
         case '#grupAMADEUS':
             client.reply(from, `Link Group AMADEUS BOT
-            group 1 : https://chat.whatsapp.com/H0Ol3sKYEoZ1zFMe0IOm0g\nJangan Lupa Join Ya Kak ${pushname}`, id)
+            https://chat.whatsapp.com/H0Ol3sKYEoZ1zFMe0IOm0g`, id)
             break
 
          case '#sosmed':
             client.reply(from, `*SOSIAL MEDIA OWNER YANG DAPAT DI IKUTI*
             YOUTUBE : https://www.youtube.com/channel/UCj7wt3nNMmlaJfxs1MODRLg
             INSTAGRAM : https://instagram.com/sankyu.bot
-            WHATSAPP : https://wa.me/628119001453\nJangan Lupa bantu subscribe follow ya ${pushname}`, id)
+            WHATSAPP : https://wa.me/628119001453\n\nJangan Lupa bantu subscribe follow ya ${pushname}`, id)
             break    
 
         case '#delete':
@@ -4354,7 +4350,7 @@ ${desc}`)
             break
 
         case '#menu':
-            if (args[1] == '')client.sendText(from, `╔══✪ *MENU*
+            if (args.length == 1) return client.reply(from, `╔══✪ *MENU*
             ║
             ╠➥_FUN MENU => ${prefix}MENU FN
             ╠➥_GAME MENU => ${prefix}MENU GM
