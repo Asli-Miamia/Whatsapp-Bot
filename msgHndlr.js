@@ -1223,6 +1223,49 @@ ${desc}`)
                     }
                         client.sendTextWithMentions(from, `menambahkan ${args[1]} limit ke @${mentionedJidList[0].replace('@c.us', '')}` )
                     break
+                    
+        case '#ytmp3':
+            if (args.length == 1) return reply(`Untuk mendownload audio dari youtube\nketik: ${prefix}ytmp3 <link yt> (don't include <> symbol)`)
+            if (args[1].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/) === null) return reply(`Link youtube tidak valid.`)
+            sendText(resMsg.wait)
+            let ytid3 = args[1].substr((args[1].indexOf('=')) != -1 ? (args[1].indexOf('=') + 1) : (args[1].indexOf('be/') + 3))
+            try {
+                ytid3 = ytid3.replace(/&.+/g, '').replace(/>/g, '')
+                let path = `./media/tts.mp3`
+                let { videoDetails: inf } = await ytdl.getInfo(ytid3)
+                if (inf.lengthSeconds > 900) return reply(`Error. Durasi video lebih dari 15 menit!`)
+                let dur = `${('0' + (inf.lengthSeconds / 60).toFixed(0)).slice(-2)}:${('0' + (inf.lengthSeconds % 60)).slice(-2)}`
+                let estimasi = inf.lengthSeconds / 200
+                let est = estimasi.toFixed(0)
+                client.sendFileFromUrl(from, `${inf.thumbnails[3].url}`, ``,
+                    `Link video valid!\n\n` +
+                    `Judul   : ${inf.title}\n` +
+                    `Channel : ${inf.ownerChannelName}\n` +
+                    `Durasi  : ${dur}\n` +
+                    `Uploaded: ${inf.uploadDate}\n` +
+                    `View    : ${inf.viewCount}\n\n` +
+                    `Audio sedang dikirim ± ${est} menit`, id)
+
+                let stream = ytdl(ytid3, { quality: 'highestaudio' })
+
+                Ffmpeg({ source: stream })
+                    .setFfmpegPath('./bin/ffmpeg')
+                    .on('error', (err) => {
+                        console.log('An error occurred: ' + err.message)
+                        reply(resMsg.error.norm)
+                        if (existsSync(path)) unlinkSync(path)
+                    })
+                    .on('end', () => {
+                        client.sendFile(from, path, `${ytid3}.mp3`, '', id).then(console.log(color('[LOGS]', 'grey'), `Audio Processed for ${processTime(time, moment())} Seconds`))
+                        if (existsSync(path)) unlinkSync(path)
+                    })
+                    .saveToFile(path)
+            } catch (err) {
+                console.log(err)
+                reply(resMsg.error.norm)
+            }
+            break 
+
 
         case '#ytmp4':
                     if (args.length == 1) return reply(`Untuk mendownload video dari youtube\nketik: ${prefix}ytmp4 <link yt> (don't include <> symbol)`)
@@ -1748,50 +1791,7 @@ ${desc}`)
                 client.sendText(ownerNumber, 'Error Play : '+ err)
                 client.reply(from, mess.error.Yt3, id)
             }
-            break   
-
-        case '#ytmp3':
-            if (args.length == 1) return reply(`Untuk mendownload audio dari youtube\nketik: ${prefix}ytmp3 <link yt> (don't include <> symbol)`)
-            if (arg.match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/) === null) return reply(`Link youtube tidak valid.`)
-            sendText(resMsg.wait)
-            let ytid = args[1].substr((args[1].indexOf('=')) != -1 ? (args[1].indexOf('=') + 1) : (args[1].indexOf('be/') + 3))
-            try {
-                ytid = ytid.replace(/&.+/g, '').replace(/>/g, '')
-                let path = `./media/temp_${t}.mp3`
-
-                let { videoDetails: inf } = await ytdl.getInfo(ytid)
-                if (inf.lengthSeconds > 900) return reply(`Error. Durasi video lebih dari 15 menit!`)
-                let dur = `${('0' + (inf.lengthSeconds / 60).toFixed(0)).slice(-2)}:${('0' + (inf.lengthSeconds % 60)).slice(-2)}`
-                let estimasi = inf.lengthSeconds / 200
-                let est = estimasi.toFixed(0)
-                client.sendFileFromUrl(from, `${inf.thumbnails[3].url}`, ``,
-                    `Link video valid!\n\n` +
-                    `Judul   : ${inf.title}\n` +
-                    `Channel : ${inf.ownerChannelName}\n` +
-                    `Durasi  : ${dur}\n` +
-                    `Uploaded: ${inf.uploadDate}\n` +
-                    `View    : ${inf.viewCount}\n\n` +
-                    `Audio sedang dikirim ± ${est} menit`, id)
-
-                let stream = ytdl(ytid, { quality: 'highestaudio' })
-
-                Ffmpeg({ source: stream })
-                    .setFfmpegPath('./bin/ffmpeg')
-                    .on('error', (err) => {
-                        console.log('An error occurred: ' + err.message)
-                        reply(resMsg.error.norm)
-                        if (existsSync(path)) unlinkSync(path)
-                    })
-                    .on('end', () => {
-                        client.sendFile(from, path, `${ytid}.mp3`, '', id).then(console.log(color('[LOGS]', 'grey'), `Audio Processed for ${processTime(time, moment())} Seconds`))
-                        if (existsSync(path)) unlinkSync(path)
-                    })
-                    .saveToFile(path)
-            } catch (err) {
-                console.log(err)
-                reply(resMsg.error.norm)
-            }
-            break 
+            break  
 
         case '#tts':
             if (args.length == 1) return client.reply(from, `Mengubah teks menjadi sound (google voice)\nketik: ${prefix}tts <kode_bahasa> <teks>\ncontoh : ${prefix}tts id halo\nuntuk kode bahasa cek disini : https://anotepad.com/note/read/5xqahdy8`)
