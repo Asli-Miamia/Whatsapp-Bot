@@ -4354,8 +4354,24 @@ ${desc}`)
             break
 
         case '#menu':
-            const {menumenu, fnmenuAA, GMMENU, ANMENU, OTMENU, ORMENUm, ADMENU, GPMENU, MDMENU, MKMENU, ASMENU, SHMENU, KRMENU, DNMENU} = './lib/help'
-            if (args[1] == '')client.sendText(from, menumenu, id)
+            if (args[1] == '')client.sendText(from, `╔══✪ *MENU*
+            ║
+            ╠➥_FUN MENU => ${prefix}MENU FN
+            ╠➥_GAME MENU => ${prefix}MENU GM
+            ╠➥_ANIME MENU => ${prefix}MENU AN
+            ╠➥_OTHER MENU => ${prefix}MENU OT
+            ╠➥_OWNER MENU => ${prefix}MENU OR
+            ╠➥_ADMIN MENU => ${prefix}MENU AD
+            ╠➥_GROUP MENU => ${prefix}MENU GP
+            ╠➥_MEDIA MENU => ${prefix}MENU MD
+            ╠➥_MAKER MENU => ${prefix}MENU MK
+            ╠➥_ASUPAN MENU => ${prefix}MENU AS
+            ╠➥_SEARCH MENU => ${prefix}MENU SH
+            ╠➥_KERANG MENU => ${prefix}MENU KR
+            ╠➥_DOWNLOADER MENU => ${prefix}MENU DN
+            ║
+            ╚═✪〘 AMADEUS BOT 〙
+              `, id)
             if (args[1] == 'fn')client.sendText(from, fnmenuAA, id)
             if (args[1] == 'gm')client.sendText(from, GMMENU, id)
             if (args[1] == 'an')client.sendText(from, ANMENU, id)
