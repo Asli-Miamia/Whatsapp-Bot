@@ -1252,7 +1252,7 @@ ${desc}`)
                                 if (existsSync(path)) unlinkSync(path)
                             })
                             .on('finish', () => {
-                                client.sendFile(from, path, `${ytid}.mp4`, inf.title, id).then(console.log(color('[LOGS]', 'grey'), `Video Processed for ${processTime(t, moment())} Seconds`))
+                                client.sendFile(from, path, `${ytid}.mp4`, inf.title, id).then(console.log(color('[LOGS]', 'grey'), `Video Processed for ${processTime(time, moment())} Seconds`))
                                 if (existsSync(path)) unlinkSync(path)
                             })
                     } catch (err) {
