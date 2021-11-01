@@ -4,7 +4,6 @@
 <div align="center">
 <details>
  <summary>AMADEUS BOT</summary>
- BY: ASLIMIAMIA
 </div>
 
 ## Getting Started
