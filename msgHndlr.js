@@ -1662,7 +1662,7 @@ ${desc}`)
             if (!isOwner) return client.reply(from, 'Perintah ini hanya untuk Owner bot', id)
             arg = body.trim().split(' ')
             client.reply(from, mess.wait, id)
-            const jhoin = '6281289096745@c.us'
+            const jhoin = '62819001453@c.us'
             const gcname = arg[1]
             client.createGroup(gcname, jhoin)
             await client.reply(from, 'Group Created ✨️', id)
@@ -4224,24 +4224,24 @@ ${desc}`)
             break
 
         case '#menu':
-            if (args[1] == '') return client.reply(from, `
-            ╔══✪ *MENU*
-            ║
-            ╠➥_FUN MENU => ${prefix}MENU FN
-            ╠➥_GAME MENU => ${prefix}MENU GM
-            ╠➥_ANIME MENU => ${prefix}MENU AN
-            ╠➥_OTHER MENU => ${prefix}MENU OT
-            ╠➥_OWNER MENU => ${prefix}MENU OR
-            ╠➥_ADMIN MENU => ${prefix}MENU AD
-            ╠➥_GROUP MENU => ${prefix}MENU GP
-            ╠➥_MEDIA MENU => ${prefix}MENU MD
-            ╠➥_MAKER MENU => ${prefix}MENU MK
-            ╠➥_ASUPAN MENU => ${prefix}MENU AS
-            ╠➥_SEARCH MENU => ${prefix}MENU SH
-            ╠➥_KERANG MENU => ${prefix}MENU KR
-            ╠➥_DOWNLOADER MENU => ${prefix}MENU DN
-            ║
-            ╚═✪〘 ${BotName} BOT 〙
+            if (args.length === 1) return client.reply(from, `
+╔══✪ *MENU*
+║
+╠➥_FUN MENU => ${prefix}MENU FN
+╠➥_GAME MENU => ${prefix}MENU GM
+╠➥_ANIME MENU => ${prefix}MENU AN
+╠➥_OTHER MENU => ${prefix}MENU OT
+╠➥_OWNER MENU => ${prefix}MENU OR
+╠➥_ADMIN MENU => ${prefix}MENU AD
+╠➥_GROUP MENU => ${prefix}MENU GP
+╠➥_MEDIA MENU => ${prefix}MENU MD
+╠➥_MAKER MENU => ${prefix}MENU MK
+╠➥_ASUPAN MENU => ${prefix}MENU AS
+╠➥_SEARCH MENU => ${prefix}MENU SH
+╠➥_KERANG MENU => ${prefix}MENU KR
+╠➥_DOWNLOADER MENU => ${prefix}MENU DN
+║
+╚═✪〘 ${BotName} BOT 〙
               `, id)
             if (args[1] == 'fn')client.sendText(from, fnmenuAA, id)
             if (args[1] == 'gm')client.sendText(from, GMMENU, id)
